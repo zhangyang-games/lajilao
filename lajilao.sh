@@ -2,7 +2,7 @@
 
 # ==================================================
 # 垃圾佬捡破烂：弱鸡三千安装脚本 (Trash-3000)
-# 版本：v1.0 (小白尊享版)
+# 版本：v1.1 (招牌加强版)
 # 整合内容：Hysteria2 (IPv6/双栈) | VLESS-Reality | Serv00保号
 # ==================================================
 
@@ -15,19 +15,36 @@ PLAIN='\033[0m'
 
 # --- 辅助函数 ---
 
-# 打印表头
+# 打印表头 (这里就是你要的招牌！)
 print_header() {
     clear
-    echo -e "${YELLOW}==========================================================${PLAIN}"
-    echo -e "${YELLOW}       🗑️  垃圾佬捡破烂：弱鸡三千安装脚本 (Trash-3000)      ${PLAIN}"
-    echo -e "${YELLOW}==========================================================${PLAIN}"
-    echo -e "${GREEN}  1. 🐔 纯 IPv6 专用：Hysteria 2 (适合 EuServ/Hax 等)${PLAIN}"
-    echo -e "${GREEN}  2. 🐔 双栈/标准鸡：Hysteria 2 (适合 CloudCone/RackNerd 等)${PLAIN}"
-    echo -e "${GREEN}  3. 👻 VLESS-Reality/Vision (通用最强防封)${PLAIN}"
-    echo -e "${BLUE}  4. 🐸 Serv00 专用：部署 Rclone 备份 & 自动保号${PLAIN}"
+    echo -e "${YELLOW}"
+    # 使用 cat EOF 防止转义字符出错，原汁原味输出
+    cat << "EOF"
+   ██╗      █████╗      ██╗██╗    ██╗    ██╗██╗      █████╗  ██████╗ 
+   ██║     ██╔══██╗     ██║██║    ██║    ██║██║     ██╔══██╗██╔═══██╗
+   ██║     ███████║     ██║██║    ██║    ██║██║     ███████║██║   ██║
+   ██║     ██╔══██║██   ██║██║    ██║    ██║██║     ██╔══██║██║   ██║
+   ███████╗██║  ██║╚█████╔╝██║    ██║    ██║███████╗██║  ██║╚██████╔╝
+   ╚══════╝╚═╝  ╚═╝ ╚════╝ ╚═╝    ╚═╝    ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ 
+EOF
+    echo -e "${PLAIN}"
+    
+    echo -e "${RED}===================================================================================================${PLAIN}"
+    echo -e "${GREEN}           🗑️  垃圾佬捡破烂：弱鸡三千安装脚本 (Trash-3000)  v1.1${PLAIN}"
+    echo -e "${RED}===================================================================================================${PLAIN}"
+    echo -e "${YELLOW}  👉 本脚本适用于 各种弱鸡 VPS 常用项目部署${PLAIN}"
+    echo -e "${YELLOW}  👉 本脚本是小白学习的总结，不做任何商业用途和盈利${PLAIN}"
+    echo -e "${YELLOW}  🙏 感谢 Gemini 地球之神的全局帮助${PLAIN}"
+    echo -e "${RED}===================================================================================================${PLAIN}"
+    echo ""
+    echo -e "  1. 🐔 纯 IPv6 专用：Hysteria 2 (适合 EuServ/Hax 等)"
+    echo -e "  2. 🐔 双栈/标准鸡：Hysteria 2 (适合 CloudCone/RackNerd 等)"
+    echo -e "  3. 👻 VLESS-Reality/Vision (通用最强防封)"
+    echo -e "  4. 🐸 Serv00 专用：部署 Rclone 备份 & 自动保号"
     echo -e "${RED}  0. 🏃 跑路 (退出脚本)${PLAIN}"
-    echo -e "${YELLOW}==========================================================${PLAIN}"
-    echo -e "当前系统: $(uname -s) $(uname -r)"
+    echo -e ""
+    echo -e "${BLUE}当前系统信息: $(uname -s) $(uname -r)${PLAIN}"
     echo ""
 }
 
@@ -246,13 +263,10 @@ EOF
     else
         # Reality 模式逻辑
         local KEYS=$(xray x25519)
-        local PK=$(echo "$KEYS" | grep "PrivateKey" | awk '{print $2}')
-        local PUB=$(echo "$KEYS" | grep "Password" | awk '{print $2}') # 注意：原文这里这里提取Public用的grep关键字可能不同，修正为标准
-        # 重新提取
-        PK=$(xray x25519 | grep "Private" | awk '{print $3}') # 修正提取逻辑
-        PUB=$(echo "$KEYS" | grep "Public" | awk '{print $3}') 
-        if [ -z "$PK" ]; then PK=$(xray x25519 | awk 'NR==1{print $3}'); PUB=$(xray x25519 | awk 'NR==2{print $3}'); fi # 兼容性处理
-
+        # 修正提取逻辑，防止 grep 失败
+        local PK=$(echo "$KEYS" | awk '/Private/{print $3}')
+        local PUB=$(echo "$KEYS" | awk '/Public/{print $3}')
+        
         local DEST="www.microsoft.com:443"
         local SNI="www.microsoft.com"
         local SHORT_ID=$(openssl rand -hex 8)
